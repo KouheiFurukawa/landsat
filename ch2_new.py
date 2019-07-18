@@ -11,10 +11,10 @@ if __name__ == "__main__":
     # Read Landsat-8 data
     #######################################################################################
     # coordinates for subimage
-    xi = 2500
-    yi = 2500
-    W = 100
-    H = 100
+    xi = 4000
+    yi = 3000
+    W = 1000
+    H = 1000
     # number of bins for histogram
     num_bins = 50
 
@@ -25,10 +25,10 @@ if __name__ == "__main__":
     for b in range(9):
         if b <= 6:
             band = b+1
-            filename = "LC08_L1TP_108036_20190418_20190423_01_T1_B"+str(band)+".TIF"
+            filename = "LC08_L1TP_111036_20180607_20180615_01_T1_B"+str(band)+".TIF"
         else:
             band = b+3
-            filename = "LC08_L1TP_108036_20190418_20190423_01_T1_B"+str(band)+".TIF"
+            filename = "LC08_L1TP_111036_20180607_20180615_01_T1_B"+str(band)+".TIF"
         img = cv2.imread(filepath+filename,-1)
 #        img = cv2.LoadImageM(filepath+filename,cv2.CV_LOAD_IMAGE_UNCHANGED)
         subimg = img[yi:yi+H, xi:xi+W]  # extract subimage
