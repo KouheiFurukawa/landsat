@@ -2,11 +2,11 @@ import matplotlib.pyplot as plt
 import cv2
 from pylab import *
 
-W = 4096
-H = 4096
+W = 4000
+H = 4000
 # xi = 13500 - W // 2
 # yi = 16500 - H // 2
-xi = 8000 - W // 2
+xi = 8500 - W // 2
 yi = 14500 - H // 2
 bins = 256
 
@@ -27,17 +27,16 @@ plt.imshow(im2)
 
 roof = np.full((W, H), 255, dtype=uint8)
 
-im3 = np.minimum(np.abs((im1 - im2) * 30), roof)
-im3 = np.array(im3, dtype=uint8)
+figure(5)
+im3 = np.array(im[yi:yi + W, xi:xi + H, 2], dtype=int8)
+for k in range(W):
+    for l in range(H):
+        im3[k][l] = abs(im2[k][l] - im1[k][l])
+im3 = im3.flatten()
+print(im3)
+plt.hist(im3, bins=51, range=(0, 50))
+
 im1 = np.array(im1, dtype=uint8)
 im2 = np.array(im2, dtype=uint8)
-figure(3)
-plt.imshow(roof - im3)
-
-im4 = np.zeros((W, H), dtype=uint8)
-
-result = cv2.merge((im1, im3, im1))
-figure(4)
-plt.imshow(result)
 
 plt.show()
