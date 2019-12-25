@@ -3,22 +3,17 @@ import matplotlib.pyplot as plt
 import cv2
 import math
 from pylab import *
-from lee_filter import *
+from inspect import signature
 
-np.set_printoptions(threshold=np.inf)
+from lee_filter_c import lee_sigma
+from module_change_detection import *
 
-W = 1000
-H = 1000
+W = 4000
+H = 4000
 # xi = 13500 - W // 2
 # yi = 16500 - H // 2
-xi = 8500 - W // 2
+xi = 8000 - W // 2
 yi = 14500 - H // 2
-
-# ノイズ検証用
-# W = 512
-# H = 512
-# xi = 15500 - W // 2
-# yi = 16200 - H // 2
 
 bins = 256
 
@@ -34,49 +29,35 @@ im2 = im[yi:yi + W, xi:xi + H, 0]  # extract subimage
 figure(2)
 plt.imshow(im2, cmap="gray")
 
-im1_flat = im1.flatten()
-im2_flat = im2.flatten()
+p1 = get_p_map(im1, W)
+p2 = get_p_map(im2, W)
+p12 = get_p_map_2d(im1, im2, W)
 
-hst1 = np.histogram(im1_flat, bins=np.linspace(0, 256, bins + 1))[0]
-hst2 = np.histogram(im2_flat, bins=np.linspace(0, 256, bins + 1))[0]
-hst12 = np.histogram2d(im1_flat, im2_flat, bins=[np.linspace(0, 256, bins + 1), np.linspace(0, 256, bins + 1)])[0]
-hst1 = hst1 / (W * H)
-hst2 = hst2 / (W * H)
-hst12 = hst12 / (W * H)
-
-mi = 0
-for i in range(256):
-    for j in range(256):
-        if hst1[i] > 0 and hst2[j] > 0 and hst12[i][j] > 0:
-            mi += hst12[i][j] * math.log(hst12[i][j] / (hst1[i] * hst2[j]), 2)
-
-vi = 0
-for i in range(256):
-    for j in range(256):
-        if hst1[i] > 0 and hst2[j] > 0 and hst12[i][j] > 0:
-            vi -= hst12[i][j] * math.log((hst12[i][j] ** 2) / (hst1[i] * hst2[j]), 2)
-
-alpha = mi / (vi + mi)
-
-result = np.zeros((W, H), dtype=np.float)
-for k in range(W):
-    for l in range(H):
-        p1 = hst1[im1[k][l]]
-        p2 = hst2[im2[k][l]]
-        p12 = hst12[im1[k][l]][im2[k][l]]
-        result[k][l] = (1 + alpha) * math.log(p12, 2) - math.log(p1 * p2, 2)
-
-output = np.zeros((W, H), dtype=np.uint8)
-for k in range(W):
-    for l in range(H):
-        if result[k][l] > 0:
-            output[k][l] = 0
-        else:
-            if abs(int(im1[k][l]) - int(im2[k][l])) > 2:
-                output[k][l] = 255
-
-output = cv2.merge((output, im1, im2))
+g = cv2.imread('ground_truth_mabi.tif')
+ans = g[2000 - W // 2:2000 + W // 2, 2000 - W // 2:2000 + W // 2, 0]
 figure(3)
-plt.imshow(output)
+plt.imshow(ans)
 
+result = mixed_information(0.151, im1, im2, W)
+figure(4)
+plt.imshow(result)
+
+output = thresholding(result, W)
+output2 = cv2.merge((output, im1, im2))
+figure(5)
+plt.imshow(output2)
 plt.show()
+
+
+a_list = [0.04 * i for i in range(25)]
+recall = []
+precision = []
+for alpha in a_list:
+    pr = clustering(p1, p2, p12, alpha, W, ans)
+    print(pr)
+    recall.append(pr[1])
+    precision.append(pr[0])
+precision.append(1)
+recall.append(0)
+figure(6)
+plt.scatter(recall, precision)

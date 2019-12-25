@@ -21,14 +21,10 @@ filename = "PRD_RGB_20180708_004_0000208911.tif"
 im = cv2.imread(filename)
 
 im1 = im[yi:yi + W, xi:xi + H, 2]  # extract subimage
-lee_sigma(im1, 3, 1)
-lee_sigma(im1, 3, 1)
 figure(1)
 plt.imshow(im1)
 
 im2 = im[yi:yi + W, xi:xi + H, 0]  # extract subimage
-lee_sigma(im2, 3, 1)
-lee_sigma(im2, 3, 1)
 figure(2)
 plt.imshow(im2)
 
