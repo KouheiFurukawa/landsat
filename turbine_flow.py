@@ -92,13 +92,13 @@ if __name__ == "__main__":
     DHI_min = lpt_design['DHI_min']
 
     for l in range(Ns):
-        for i in range(1):
+        for i in range(-5, -4):
             for j in range(-90, 90):
                 for k in range(39, 40):
-                    flow = velocity_triangle_turbine(i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U_in * DHI_min / DHI_max, Tt_in - (l + 1) * Tstg)
+                    flow = velocity_triangle_turbine(i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U_in * r_lpt[l] / DHI_max, Tt_in - (l + 1) * Tstg)
                     dv = lpt_design['dv']
                     if type(flow['MoR']) is complex:
                         continue
                     if flow['Z_rotor'] <= 1 and flow['Z_stator'] <= 1 and flow['MoR'] <= 0.9 and flow['theta12'] <= 120 and \
-                            flow['theta23'] <= 120:
+                            flow['theta23'] <= 120 and 0.98 < (flow['v3'] - flow['v2']) / dv < 1.02:
                         print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U_in * r_lpt[l] / DHI_max, Tt_in - (l + 1) * Tstg)
