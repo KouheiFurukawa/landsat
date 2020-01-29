@@ -43,8 +43,8 @@ ef = 0.89
 
 def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
     # 断熱効率
-    eta_cLP = (pr_cLP ** ((gamma - 1) / gamma) - 1) / (pr_cLP ** ((gamma - 1) / (0.90 * gamma)) - 1)
-    eta_cHP = 1
+    eta_cLP = 1
+    eta_cHP = (pr_cHP ** ((gamma - 1) / gamma) - 1) / (pr_cHP ** ((gamma - 1) / (0.90 * gamma)) - 1)
     eta_tHP = 0.93
     eta_tLP = 0.93
     eta_mLP = 0.99
@@ -58,7 +58,7 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
     Tt0 = T0 * (1 + (M0 ** 2) * (gamma - 1) / 2)
 
     # ②インテーク出口
-    Pt2 = Pt0 * (1 - omega1)
+    Pt2 = Pt0 * 0.905
     Tt2 = Tt0
     m2 = amf
     I2 = Cpc * Tt2
@@ -69,21 +69,11 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
     I13 = I2 + Cpc * (Tt13 - Tt2)
     m13 = mbp = m2 * (mu / (1 + mu))
 
-    # ファンノズル(バイパス部)
-    Pt19 = Pt13 * (1 - omega_n_bp)
-    Tt19 = Tt13
-
     # ファン出口(コア部)
-    Pt21 = pr_fan * Pt2
-    Tt21 = Tt2 * (1 + (pr_fan ** ((gamma - 1) / gamma) - 1) / eta_fan)
-    I21 = I2 + Cpc * (Tt21 - Tt2)
-    m21 = m_core = m2 / (1 + mu)
-
-    # 低圧圧縮機LPC出口(＝高圧圧縮機入口)
-    Pt25 = Pt21 * pr_cLP
-    Tt25 = Tt21 * (1 + (pr_cLP ** ((gamma - 1) / gamma) - 1) / eta_cLP)
-    I25 = Cpc * Tt25
-    m25 = m21
+    Pt25 = pr_fan * Pt2
+    Tt25 = Tt2 * (1 + (pr_fan ** ((gamma - 1) / gamma) - 1) / eta_fan)
+    I25 = I2 + Cpc * (Tt25 - Tt2)
+    m25 = m_core = m2 / (1 + mu)
 
     # ④高圧圧縮機HPC出口
     Pt3 = pr_cHP * Pt25
@@ -170,11 +160,11 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
     # m_fab = 0
 
     # ⑨アフターバーナ(着火時＝燃焼)
+    # Tt7 = Tt6A
     Pt7 = Pt6A * (1 - omega_ab_on)
     I7 = I6A + Cpt * (Tt7 - Tt6A)
     m_fab = m6A * (I7 - I6A) / (eta_ab * If - I7)
     m7 = m6A + m_fab
-    FAR_ab = m_fab / m6A
 
     # ⑩ノズル
     Pt9 = Pt7 * (1 - omega_n_core)
@@ -183,8 +173,8 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
     pr_cri = ((gamma_6A + 1) / 2) ** (gamma_6A / (gamma_6A - 1))
     P9_choke = Pt9 / pr_cri
 
-    # P9 = (P0 + P9_choke) / 2
-    P9 = (P0 * P9_choke) ** 0.5
+    # P9 = (P9_choke + P0) / 2
+    P9 = 2 * P0
     M9 = ((2 / (gamma_t - 1)) * ((Pt9 / P9) ** ((gamma_t - 1) / gamma_t) - 1)) ** 0.5
 
     T9 = Tt9 / ((gamma_t + 1) / 2)
@@ -192,20 +182,15 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
     rho9 = P9 / (Rt * T9)
     A9 = m9 / (rho9 * V9)
 
-    # if Pt9 / P0 <= ((gamma_t + 1) / 2) ** (gamma_t / (gamma_t - 1)):
-    #     P9 = P0
-    #     M9 = ((2 / (gamma_t - 1)) * ((Pt9 / P9) ** ((gamma_t - 1) / gamma_t) - 1)) ** 0.5
-    # else:
-    #     M9 = 1
-    #     P9 = Pt9 / ((gamma_t + 1) / 2) ** (gamma_t / (gamma_t - 1))
-
-    # T9 = Tt9 / (1 + (M9 ** 2 * (gamma_t - 1) / 2))
-    # V9 = M9 * (gamma_t * Rt * T9) ** 0.5
-    # rho9 = P9 / (Rt * T9)
-    # A9 = m9 / (rho9 * V9)
+    if P9_choke < P9 or V9 < V0:
+        return {
+            'F': 1,
+            'm_fab': -1,
+        }
 
     # 推力
     FN = (m9 * V9 - amf * V0) + A9 * (P9 - P0)
+    FN_gross = A9 * (P9 - P0) + m9 * V9
 
     # SFC
     sfc = (m_fcb + m_fab) / FN
@@ -216,7 +201,6 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
         'm13': m13,
         'm19': mbp,
         'm2': m2,
-        'm21': m21,
         'm25': m25,
         'm3': m3,
         'm4': m4,
@@ -235,7 +219,6 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
         'Pt2': Pt2,
         'Pt13': Pt13,
         'Pt16': Pt16,
-        'Pt21': Pt21,
         'Pt25': Pt25,
         'Pt3': Pt3,
         'Pt4': Pt4,
@@ -247,10 +230,8 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
         'Pt9': Pt9,
         'P9': P9,
         'P16': P16,
-        'Pt19': Pt19,
         'I2': I2,
         'I13': I13,
-        'I21': I21,
         'I25': I25,
         'I3': I3,
         'I4': I4,
@@ -266,7 +247,6 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
         'Tt0': Tt0,
         'Tt2': Tt2,
         'Tt13': Tt13,
-        'Tt21': Tt21,
         'Tt25': Tt25,
         'Tt3': Tt3,
         'Tt4': Tt4,
@@ -278,8 +258,8 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
         'Tt7': Tt7,
         'Tt9': Tt9,
         'T9': T9,
-        'Tt19': Tt19,
         'F': FN,
+        'F_gross': FN_gross,
         'sfc': sfc * 3600 * 9.8,
         'eta_tHP': eta_tHP,
         'eta_tLP': eta_tLP,
@@ -299,31 +279,38 @@ def calc(pr_fan, pr_cLP, pr_cHP, mu, Tt4, Tt7, amf):
         'A16': A16,
         'A6A': A6A,
         'A9': A9,
+        'V0': V0,
+        'V9': V9,
+        'P6A': P6A,
+        'P9_choke': P9_choke,
+        'gamma_a': gamma_6A,
     }
 
 
 if __name__ == "__main__":
-    fan = [1.1, 1.2, 1.3, 1.4, 1.5, 1.8, 2.0, 2.2, 2.5, 2.8, 3.0]
+    fan = [x * 0.1 for x in range(11, 30)]
     comp = [1]
-    comp_l = [2, 3, 4, 5, 5.5, 6, 7, 10, 15]
-    bpr = [2.5, 3, 3.5]
-    ans = 10
-    tc = [1500, 1600, 1700, 1800, 1900, 2000]
-    ta = [1200, 1400, 1500, 1600, 1700, 1800, 1900, 2000]
-    mass = [74.33]
+    comp_h = [x * 0.1 for x in range(40, 100)]
+    bpr = [x * 0.1 for x in range(15, 40)]
+    ans = 10000
+    tc = [1500, 1600, 1700, 1800, 1900]
+    ta = [1200, 1250, 1300, 1350, 1400, 1450, 1500, 1600]
+    mass = [100]
 
     for f in fan:
-        for ch in comp:
-            for cl in comp_l:
+        for cl in comp:
+            for ch in comp_h:
                 for b in bpr:
                     for a in ta:
                         for c in tc:
                             for n in mass:
                                 cc = calc(f, cl, ch, b, c, a, n)
                                 FN = cc['F'] / 9.8
-                                if type(FN) is float and cc['m_fab'] > 0:
-                                    fuel = calc(f, cl, ch, b, c, a, n)['sfc']
-                                    if 0 < fuel < ans:
+                                if type(FN) is float and cc['m_fab'] >= 0:
+                                    fuel = cc['sfc']
+                                    tsp = cc['Isp']
+                                    v9 = cc['V9']
+                                    if tsp > 80 and fuel < ans:
                                         ans = min(ans, fuel)
                                         spec = calc(f, cl, ch, b, c, a, n)
 
