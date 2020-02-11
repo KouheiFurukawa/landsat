@@ -83,35 +83,63 @@ def velocity_triangle(alpha1, alpha2, alpha3, u, U):
 
 
 if __name__ == "__main__":
-    # pprint.pprint(velocity_triangle(0, 0, 14, 180.59, 450))
-    # pprint.pprint(velocity_triangle(14, 43, 14, 180.59, 450))
-    # pprint.pprint(velocity_triangle(14, 43, 13, 180.59, 450))
-    # pprint.pprint(velocity_triangle(13, 42, 0, 180.59, 450))
-    #
-    # pprint.pprint(velocity_triangle(0, 0, 24, 225.45, 450))
-    # pprint.pprint(velocity_triangle(24, 44, 19, 225.5, 450))
-    # pprint.pprint(velocity_triangle(19, 41, 0, 225.5, 450))
+    # HPC
+    pprint.pprint(velocity_triangle(0, 0, 21, (225.45 * (7 - 0) + 180.59 * 0) / 7, 450))
+    pprint.pprint(velocity_triangle(21, 43, 22, (225.45 * (7 - 0) + 180.59 * 0) / 7, 450))
+    pprint.pprint(velocity_triangle(22, 44, 21, (225.45 * (7 - 1) + 180.59 * 1) / 7, 450))
+    pprint.pprint(velocity_triangle(21, 44, 15, (225.45 * (7 - 2) + 180.59 * 2) / 7, 450))
+    pprint.pprint(velocity_triangle(15, 41, 16, (225.45 * (7 - 3) + 180.59 * 3) / 7, 450))
+    pprint.pprint(velocity_triangle(16, 41, 17, (225.45 * (7 - 4) + 180.59 * 4) / 7, 450))
+    pprint.pprint(velocity_triangle(17, 42, 14, (225.45 * (7 - 5) + 180.59 * 5) / 7, 450))
+    pprint.pprint(velocity_triangle(14, 41, 0, (225.45 * (7 - 6) + 180.59 * 6) / 7, 450))
 
-    Ns = fan_design['Ns']
-    u_in = fan_design['u_in']
-    u_out = fan_design['u_out']
-    U = fan_design['UTI']
-    DHI_max = fan_design['DHI_max']
+    pprint.pprint(velocity_triangle(0, 0, 21, (225.45 * (7 - 0) + 180.59 * 0) / 7, 382.57))
+    pprint.pprint(velocity_triangle(21, 43, 22, (225.45 * (7 - 0) + 180.59 * 0) / 7, 382.90))
+    pprint.pprint(velocity_triangle(22, 44, 21, (225.45 * (7 - 1) + 180.59 * 1) / 7, 384.54))
+    pprint.pprint(velocity_triangle(21, 44, 15, (225.45 * (7 - 2) + 180.59 * 2) / 7, 387.83))
+    pprint.pprint(velocity_triangle(15, 41, 16, (225.45 * (7 - 3) + 180.59 * 3) / 7, 392.77))
+    pprint.pprint(velocity_triangle(16, 41, 17, (225.45 * (7 - 4) + 180.59 * 4) / 7, 399.67))
+    pprint.pprint(velocity_triangle(17, 42, 14, (225.45 * (7 - 5) + 180.59 * 5) / 7, 407.90))
+    pprint.pprint(velocity_triangle(14, 41, 0, (225.45 * (7 - 6) + 180.59 * 6) / 7, 418.09))
 
-    for l in range(Ns):
-        for i in range(0, 90):
-            for j in range(-90, 90):
-                for k in range(0, 90):
-                    # flow = velocity_triangle(i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U * r_hpc[l] / DHI_max)
-                    flow = velocity_triangle(i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U)
-                    design = fan_design
-                    if flow['DF_rotor'] <= 0.55 and flow['DF_stator'] <= 0.55 and 0.5 <= flow[
-                        'R'] <= 0.8 and flow['Cp_rotor'] <= 0.45 and 0.35 < flow[
-                        'Cp_stator'] <= 0.45:
-                        # print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U * r_hpc[l] / DHI_max)
-                        if l == 0 and 1.02 > (flow['v2'] - flow['v1']) / (design['dv'] * 1.05) > 0.98:
-                            print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns)
-                        elif l == 1 and 1.02 > (flow['v2'] - flow['v1']) / (design['dv'] * 0.95) > 0.98:
-                            print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns)
-                        elif l > 2 and 1.02 > (flow['v2'] - flow['v1']) / (design['dv']) > 0.98:
-                            print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns)
+    pprint.pprint(velocity_triangle(0, 0, 21, (225.45 * (7 - 0) + 180.59 * 0) / 7, 315.13))
+    pprint.pprint(velocity_triangle(21, 43, 22, (225.45 * (7 - 0) + 180.59 * 0) / 7, 315.79))
+    pprint.pprint(velocity_triangle(22, 44, 21, (225.45 * (7 - 1) + 180.59 * 1) / 7, 319.08))
+    pprint.pprint(velocity_triangle(21, 44, 15, (225.45 * (7 - 2) + 180.59 * 2) / 7, 325.66))
+    pprint.pprint(velocity_triangle(15, 41, 16, (225.45 * (7 - 3) + 180.59 * 3) / 7, 335.53))
+    pprint.pprint(velocity_triangle(16, 41, 17, (225.45 * (7 - 4) + 180.59 * 4) / 7, 349.34))
+    pprint.pprint(velocity_triangle(17, 42, 14, (225.45 * (7 - 5) + 180.59 * 5) / 7, 365.79))
+    pprint.pprint(velocity_triangle(14, 41, 0, (225.45 * (7 - 6) + 180.59 * 6) / 7, 386.18))
+
+    # ファン
+    pprint.pprint(velocity_triangle(0, 0, 26, 280.09, 450))
+    pprint.pprint(velocity_triangle(26, 43, 20, 280.09, 450))
+    pprint.pprint(velocity_triangle(20, 39, 0, 252.77, 450))
+
+    pprint.pprint(velocity_triangle(0, 0, 26, 280.09, 337.5))
+    pprint.pprint(velocity_triangle(26, 43, 20, 280.09, 356.68))
+    pprint.pprint(velocity_triangle(20, 39, 0, 252.77, 382.38))
+
+    pprint.pprint(velocity_triangle(0, 0, 26, 280.09, 225))
+    pprint.pprint(velocity_triangle(26, 43, 20, 280.09, 263.36))
+    pprint.pprint(velocity_triangle(20, 39, 0, 252.77, 314.76))
+
+    Ns = hpc_design['Ns']
+    u_in = hpc_design['u_in']
+    u_out = hpc_design['u_out']
+    U = hpc_design['UTI']
+    DHI_max = hpc_design['DHI_max']
+
+    # for l in range(0, 3):
+    #     for i in range(0, 90):
+    #         for j in range(-90, 90):
+    #             for k in range(-90, 90):
+    #                 flow = velocity_triangle(i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U * r_hpc[l] / DHI_max)
+    #                 # flow = velocity_triangle(i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U)
+    #                 design = hpc_design
+    #                 if flow['DF_rotor'] <= 0.55 and flow['DF_stator'] <= 0.55 and 0.5 <= flow[
+    #                     'R'] <= 0.8 and 0.35 < flow['Cp_rotor'] <= 0.45 and 0.35 < flow[
+    #                     'Cp_stator'] <= 0.45:
+    #                     print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U * r_hpc[l] / DHI_max)
+                        # if 1.02 > (flow['v2'] - flow['v1']) / (design['dv']) > 0.98:
+                        #     print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns)

@@ -123,11 +123,12 @@ lpt_design = turbine_design(3, m45, Tt45, Tt5_, Pt45, Pt5_, Utip_l, alpha_1_lpt,
 
 r_hpt = [hpt_design['DHI_min'] + (hpt_design['DHO_max'] - hpt_design['DHI_max']) * (
         (2 * i) / (hpc_design['Ns'] * 2)) ** 2 for i in range(hpt_design['Ns'])]
-r_lpt = [lpt_design['DHI_min'] + (lpt_design['DHO_max'] - lpt_design['DHI_max']) * (
+r_lpt = [lpt_design['DHI_max'] + (lpt_design['DHO_max'] - lpt_design['DHI_max']) * (
         (2 * i) / (lpt_design['Ns'] * 2)) ** 2 for i in range(lpt_design['Ns'])]
 
 
 if __name__ == "__main__":
     pprint.pprint(turbine_design(1, m4, Tt4, Tt45_, Pt4, Pt45_, Utip, alpha_1_hpt, alpha_2_hpt, 0.15, 0.3, hpc_design['NG'], 'I'))
     pprint.pprint(turbine_design(3, m45, Tt45, Tt5_, Pt45, Pt5_, Utip_l, alpha_1_lpt, alpha_2_lpt, 0.4, 0.45, fan_design['NG'], 'I'))
+    print(r_lpt)
 

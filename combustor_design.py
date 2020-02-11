@@ -38,4 +38,4 @@ def combustor_design(SR, r, D):
     }
 
 
-pprint.pprint(combustor_design(0.5, 2, 0.6))
+pprint.pprint(combustor_design(0.75, 2.5, 0.7))

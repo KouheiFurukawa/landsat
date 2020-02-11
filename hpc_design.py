@@ -132,8 +132,11 @@ hpc_design = compressor_design(7, 0.7, 0.3, m25, Pt25, Pt3, Tt25, Tt3, 'E', 190)
 fan_design = compressor_design(2, 0.5, 0.5, m2, Pt2, Pt25, Tt2, Tt25, 'E', 131)
 r_hpc = [hpc_design['DHI_min'] + (hpc_design['DHO_min'] - hpc_design['DHI_min']) * (
             (1 + 2 * i) / (hpc_design['Ns'] * 2 + 1)) ** 2 for i in range(hpc_design['Ns'])]
-r_fan = [fan_design['DHI_min'] + (fan_design['DHO_min'] - fan_design['DHI_min']) * (
-        (2 * i) / (fan_design['Ns'] * 2)) ** 2 for i in range(fan_design['Ns'])]
+r_fan = [fan_design['DHO_min'] - (fan_design['DHO_min'] - fan_design['DHI_min']) * (
+        (2 * (fan_design['Ns'] - i)) / (fan_design['Ns'] * 2 + 1)) ** 2 for i in range(fan_design['Ns'])]
 if __name__ == "__main__":
-    pprint.pprint(compressor_design(3, 0.5, 0.5, m2, Pt2, Pt25, Tt2, Tt25, 'E', 131))
+    pprint.pprint(compressor_design(2, 0.5, 0.5, m2, Pt2, Pt25, Tt2, Tt25, 'E', 131))
     pprint.pprint(compressor_design(7, 0.7, 0.3, m25, Pt25, Pt3, Tt25, Tt3, 'E', 190))
+    print(r_hpc)
+    print(r_fan)
+

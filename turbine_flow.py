@@ -70,10 +70,23 @@ def velocity_triangle_turbine(alpha1, alpha2, alpha3, u, U, Tt_out):
 
 
 if __name__ == "__main__":
+    # HPT
     pprint.pprint(velocity_triangle_turbine(0, -82, -5, 85.09, 480, 1532.7))
+    pprint.pprint(velocity_triangle_turbine(0, -82, -5, 85.09, 462.25, 1532.7))
+    pprint.pprint(velocity_triangle_turbine(0, -82, -5, 85.09, 444.49, 1532.7))
+
+    # LPT
     pprint.pprint(velocity_triangle_turbine(-5, -17, 39, 298.87, 300, 1412.95))
-    pprint.pprint(velocity_triangle_turbine(39, -24, 34, 298.87, 317.69, 1324.70))
-    pprint.pprint(velocity_triangle_turbine(34, -48, 0, 298.87, 335.38, 1236.45))
+    pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 303.96, 1324.70))
+    pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 317.41, 1236.45))
+
+    pprint.pprint(velocity_triangle_turbine(-5, -17, 39, 298.87, 275.67, 1412.95))
+    pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 277.65, 1324.70))
+    pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 284.37, 1236.45))
+
+    pprint.pprint(velocity_triangle_turbine(-5, -17, 39, 298.87, 251.33, 1412.95))
+    pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 251.33, 1324.70))
+    pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 251.33, 1236.45))
 
     # U_in = hpt_design['U_in']
     # U_out = hpt_design['U_out']
@@ -91,14 +104,14 @@ if __name__ == "__main__":
     DHI_max = lpt_design['DHI_max']
     DHI_min = lpt_design['DHI_min']
 
-    for l in range(Ns):
-        for i in range(-5, -4):
-            for j in range(-90, 90):
-                for k in range(39, 40):
-                    flow = velocity_triangle_turbine(i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U_in * r_lpt[l] / DHI_max, Tt_in - (l + 1) * Tstg)
-                    dv = lpt_design['dv']
-                    if type(flow['MoR']) is complex:
-                        continue
-                    if flow['Z_rotor'] <= 1 and flow['Z_stator'] <= 1 and flow['MoR'] <= 0.9 and flow['theta12'] <= 120 and \
-                            flow['theta23'] <= 120 and 0.98 < (flow['v3'] - flow['v2']) / dv < 1.02:
-                        print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U_in * r_lpt[l] / DHI_max, Tt_in - (l + 1) * Tstg)
+    # for l in range(Ns):
+    #     for i in range(-5, -4):
+    #         for j in range(-90, 90):
+    #             for k in range(39, 40):
+    #                 flow = velocity_triangle_turbine(i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U_in * r_lpt[l] / DHI_max, Tt_in - (l + 1) * Tstg)
+    #                 dv = lpt_design['dv']
+    #                 if type(flow['MoR']) is complex:
+    #                     continue
+    #                 if flow['Z_rotor'] <= 1 and flow['Z_stator'] <= 1 and flow['MoR'] <= 0.9 and flow['theta12'] <= 120 and \
+    #                         flow['theta23'] <= 120 and 0.98 < (flow['v3'] - flow['v2']) / dv < 1.02:
+    #                     print(l + 1, i, j, k, (u_in * (Ns - l) + u_out * l) / Ns, U_in * r_lpt[l] / DHI_max, Tt_in - (l + 1) * Tstg)
