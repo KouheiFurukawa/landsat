@@ -80,6 +80,7 @@ def turbine_design(stages, m, Tt_in, Tt_out, Pt_in, Pt_out, utip, alpha_1, alpha
     U_out = utip * (DHO_max / DHI_max)
 
     Tstg = (Tt_in - Tt_out) / stages
+    di = (Tt_in - Tt_out) * Cpt
     dv = Tstg * Cpt / utip
     phi = psi = Cpt * Tstg / ((UMO + UMI) / 2) ** 2
 
@@ -115,6 +116,7 @@ def turbine_design(stages, m, Tt_in, Tt_out, Pt_in, Pt_out, utip, alpha_1, alpha
         'U_out': U_out,
         'u_in': u_in,
         'u_out': u_out,
+        'di': di,
     }
 
 

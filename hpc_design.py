@@ -125,6 +125,7 @@ def compressor_design(stages, BRI, MO, m, Pt_in, Pt_out, Tt_in, Tt_out, passage_
         'dv': dv,
         'UTO': UTO,
         'MI': MI,
+        'di': di,
     }
 
 

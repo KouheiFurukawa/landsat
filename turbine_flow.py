@@ -6,21 +6,26 @@ Cp = 1150
 gamma_t = 1.33
 
 
-def velocity_triangle_turbine(alpha1, alpha2, alpha3, u, U, Tt_out):
+def velocity_triangle_turbine(alpha1, alpha2, alpha3, u, uout, U, Tt_out):
+    u2 = (u + uout) / 2
+    u3 = uout
     V1 = u / math.cos(math.radians(alpha1))
-    V2 = u / math.cos(math.radians(alpha2))
+    V2 = u2 / math.cos(math.radians(alpha2))
     v1 = V1 * math.sin(math.radians(alpha1))
     v2 = V2 * math.sin(math.radians(alpha2))
+    v1R = v1 - U
+    beta1 = math.degrees(math.atan(v1R / u))
+    V1R = u / math.cos(math.radians(beta1))
 
     v2R = v2 + U
-    beta2 = math.degrees(math.atan(v2R / u))
-    V2R = u / math.cos(math.radians(beta2))
+    beta2 = math.degrees(math.atan(v2R / u2))
+    V2R = u2 / math.cos(math.radians(beta2))
 
-    V3 = u / math.cos(math.radians(alpha3))
+    V3 = u3 / math.cos(math.radians(alpha3))
     v3 = V3 * math.sin(math.radians(alpha3))
     v3R = v3 + U
-    beta3 = math.degrees(math.atan(v3R / u))
-    V3R = u / math.cos(math.radians(beta3))
+    beta3 = math.degrees(math.atan(v3R / u3))
+    V3R = u3 / math.cos(math.radians(beta3))
     sigma = 2
 
     G_rotor = 0.5 * (beta3 + beta2)
@@ -45,6 +50,9 @@ def velocity_triangle_turbine(alpha1, alpha2, alpha3, u, U, Tt_out):
 
     return {
         'V1': V1,
+        'v1R': v1R,
+        'V1R': V1R,
+        'beta1': beta1,
         'V2': V2,
         'v2': v2,
         'v2R': v2R,
@@ -64,29 +72,34 @@ def velocity_triangle_turbine(alpha1, alpha2, alpha3, u, U, Tt_out):
         'Cx_stator': Cx_stator,
         'theta12': theta12,
         'theta23': theta23,
-        'u': u,
+        'u1': u,
+        'u2': u2,
+        'u3': u3,
         'v1': v1,
     }
 
 
 if __name__ == "__main__":
     # HPT
-    pprint.pprint(velocity_triangle_turbine(0, -82, -5, 85.09, 480, 1532.7))
-    pprint.pprint(velocity_triangle_turbine(0, -82, -5, 85.09, 462.25, 1532.7))
-    pprint.pprint(velocity_triangle_turbine(0, -82, -5, 85.09, 444.49, 1532.7))
+    pprint.pprint(velocity_triangle_turbine(0, -78, -5, 127.51, 255.01, 480, 1532.7))
+    pprint.pprint(velocity_triangle_turbine(0, -78, -5, 127.51, 255.01, 462.25, 1532.7))
+    pprint.pprint(velocity_triangle_turbine(0, -78, -5, 127.51, 255.01, 444.49, 1532.7))
 
     # LPT
-    pprint.pprint(velocity_triangle_turbine(-5, -17, 39, 298.87, 300, 1412.95))
-    pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 303.96, 1324.70))
-    pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 317.41, 1236.45))
-
-    pprint.pprint(velocity_triangle_turbine(-5, -17, 39, 298.87, 275.67, 1412.95))
-    pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 277.65, 1324.70))
-    pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 284.37, 1236.45))
-
-    pprint.pprint(velocity_triangle_turbine(-5, -17, 39, 298.87, 251.33, 1412.95))
-    pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 251.33, 1324.70))
-    pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 251.33, 1236.45))
+    # print('tip')
+    # pprint.pprint(velocity_triangle_turbine(-5, -8, 39, 298.87, 311.33, 300, 1412.95))
+    # pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 323.78, 303.96, 1324.70))
+    # pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 336.23, 317.41, 1236.45))
+    #
+    # print('mid')
+    # pprint.pprint(velocity_triangle_turbine(-5, -8, 39, 298.87, 311.33, 275.67, 1412.95))
+    # pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 323.78, 277.65, 1324.70))
+    # pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 336.23, 284.37, 1236.45))
+    #
+    # print('hub')
+    # pprint.pprint(velocity_triangle_turbine(-5, -8, 39, 298.87, 311.33, 251.33, 1412.95))
+    # pprint.pprint(velocity_triangle_turbine(39, -22, 35, 311.33, 323.78, 251.33, 1324.70))
+    # pprint.pprint(velocity_triangle_turbine(35, -46, 0, 323.78, 336.23, 251.33, 1236.45))
 
     # U_in = hpt_design['U_in']
     # U_out = hpt_design['U_out']
